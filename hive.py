@@ -7,4 +7,8 @@
 class Hive:
     
     def __init__(self):
-        self.pawns
+        self.pawns = {}
+
+
+    def empty(self):
+        return self.pawns == {}
