@@ -24,8 +24,6 @@ class Hive:
             print location
             locations.append(location)
 
-            print location
-
         return locations
 
     def edge(self):
@@ -34,6 +32,7 @@ class Hive:
         for loc in locations:
             for edge in hpc_within_one(loc):
                 edges.append(edge)
+                print edge
 
         return edges
             

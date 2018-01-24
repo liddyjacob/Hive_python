@@ -40,6 +40,9 @@ class HCPoint:
     def __str__(self):
         return "HCP(" + str(self.h) + ", " + str(self.k) + ")"
 
+    def __hash__(self):
+        return 3*self.h + 13*self.k
+
 #Converts a honeycomb point to euclidian
 def hpc_to_eucl(hcp):
 

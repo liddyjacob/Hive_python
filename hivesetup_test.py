@@ -30,7 +30,7 @@ class TestHiveSetup(unittest.TestCase):
         open_locations = [HCP(1,0), HCP(0,1), HCP(-1,0),
                           HCP(0,-1), HCP(1,-1), HCP(-1,1)]
 
-        self.assertTrue(board.edge() == open_locations)
+        self.assertTrue(set(board.edge()) == set(open_locations))
 
 
 if __name__ == '__main__':
