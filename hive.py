@@ -1,4 +1,5 @@
-
+ 
+from honeycomb import hpc_within_one
 
 
 """
@@ -16,3 +17,23 @@ class Hive:
 
     def add(self, pawn, location):
         self.pawns[pawn] = location
+
+    def __pawn_loc__(self):
+        locations = []
+        for pawn, location in self.pawns.iteritems():
+            print location
+            locations.append(location)
+
+            print location
+
+        return locations
+
+    def edge(self):
+        locations = self.__pawn_loc__()
+        edges = []
+        for loc in locations:
+            for edge in hpc_within_one(loc):
+                edges.append(edge)
+
+        return edges
+            
