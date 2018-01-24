@@ -1,4 +1,8 @@
-#pawn.py
+from enum import Enum
+
+class Color(Enum):
+    BLACK = 0
+    WHITE = 1
 
 """
     A pawn is a piece used in hive.
@@ -8,13 +12,10 @@
     The goal of hive is to surround the
     opponents queen bee pawn.
 """
-
 class Pawn:
 
     def __init__(self, color):
         self.color = color
-
-
 
 class Queen(Pawn):
 
