@@ -20,8 +20,8 @@ class Hive:
 
     def __pawn_loc__(self):
         locations = []
+        
         for pawn, location in self.pawns.iteritems():
-            print location
             locations.append(location)
 
         return locations
@@ -29,10 +29,18 @@ class Hive:
     def edge(self):
         locations = self.__pawn_loc__()
         edges = []
+        
         for loc in locations:
+        
             for edge in hpc_within_one(loc):
+  
+                if edge in locations:
+                    continue
+
+                if edge in edges:
+                    continue
+
                 edges.append(edge)
-                print edge
 
         return edges
             

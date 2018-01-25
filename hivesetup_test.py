@@ -21,7 +21,7 @@ class TestHiveSetup(unittest.TestCase):
         #Need another test case here th check if 
         #the spider was added
          
-    def test_boundries(self):
+    def test_boundries(self):        
         board = Hive()
         piece = Spider(Color.WHITE)
         board.add(piece, HCP(0,0))
@@ -30,8 +30,21 @@ class TestHiveSetup(unittest.TestCase):
         open_locations = [HCP(1,0), HCP(0,1), HCP(-1,0),
                           HCP(0,-1), HCP(1,-1), HCP(-1,1)]
 
-        self.assertTrue(set(board.edge()) == set(open_locations))
+        self.assertEqual(set(board.edge()),set(open_locations))
 
+    def test_two_piece(self):
+        board = Hive()
+        piece1 = Spider(Color.WHITE)
+        piece2 = Spider(Color.WHITE)
+        board.add(piece1, HCP(0,0))
+        board.add(piece2, HCP(1,0))
+
+        open_locations = [HCP(1,1), HCP(0,1), HCP(-1,0),
+                          HCP(0,-1), HCP(1,-1), HCP(-1,1),
+                          HCP(2,0), HCP(2,-1)]
+
+        self.assertEqual(set(board.edge()), set(open_locations))
+        
 
 if __name__ == '__main__':
     unittest.main()
