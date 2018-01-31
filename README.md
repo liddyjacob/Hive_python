@@ -24,7 +24,7 @@ There is no working version of the game. Just unit tests.
 
 Run this command:
 
-'python hivesetup\_test.py'
+`python hivesetup\_test.py`
 
 Replace hivesetup\_test.py with whatever test you would like to 
 run.
