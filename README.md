@@ -1,6 +1,6 @@
 # Hive -- The Tabletop Stratagy Game!
 
-This is an implimentation of Hive in Python. Here are the planned
+This is an implementation of Hive in Python. Here are the planned
 main features:
 
 * A functional, working implimentation of Hive in Python
