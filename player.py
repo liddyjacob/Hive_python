@@ -3,12 +3,14 @@ Player Object
 """
 
 from pawn import default_pawns
+from honeycomb import HCPoint as HCP
+
 
 # Author: Jacob Liddy<jpl61@zips.uakron.edu>
 
 class Player:
-    """ Represents a Player of Hive 
-    
+    """ Represents a Player of Hive  
+
     Parameters:
 
     Color: Required
@@ -30,5 +32,20 @@ class Player:
         if pawns == None:
             self.pawns = default_pawns(color)
         else:
-            self.pawns = pawns
+            self.pawns = pawns;
 
+    def place(self, pawntype, location, hive):
+        """ Places a pawn on a hive board."""
+        piece = self.find(pawntype);
+
+        if piece != False:
+            hive.add(piece, location)
+
+    def find(self, pawntype):
+
+        for pawn in self.pawns:
+
+            if isinstance(pawn, pawntype):
+                return pawn
+        
+        return False # No pawn of selectec type found.

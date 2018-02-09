@@ -44,6 +44,24 @@ class TestHiveSetup(unittest.TestCase):
                           HCP(2,0), HCP(2,-1)]
 
         self.assertEqual(set(board.edge()), set(open_locations))
+       
+    def test_hivebreak(self):
+        board = Hive()
+
+        piece1 = Spider(Color.WHITE)
+        board.add(piece1, HCP(0,0))
+
+        piece2 = Spider(Color.BLACK)
+        board.add(piece2, HCP(1,0))
+
+        piece3 = Spider(Color.BLACK)
+        board.add(piece3, HCP(1,1))
+
+        # These locations will break the hive
+        breaker = [piece2, (1,0)]
+
+        self.assertEqual(board.breaker(), breaker)
+        
         
 
 if __name__ == '__main__':
