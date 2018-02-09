@@ -45,7 +45,7 @@ class HCPoint:
         return 3*self.h + 13*self.k
 
 
-def hpc_to_eucl(hcp):
+def hcp_to_eucl(hcp):
     """ Converts a honeycomb point to euclidian"""
 
     # Describes (0,1) from HoneyComb to euclidian,
@@ -56,12 +56,12 @@ def hpc_to_eucl(hcp):
     # "h" vector.
     v_h = (sqrt(3)/2.0, 1.0/2.0)
 
-    xy_point = v_h * hpc.h + v_k * hpc.k
+    xy_point = v_h * hcp.h + v_k * hcp.k
 
     return xy_point
 
 
-def hpc_within_one(hpc):
+def hcp_within_one(hcp):
     """ Find the points within one euclidian unit of distance.
         Returns the set of points
     """
@@ -72,6 +72,6 @@ def hpc_within_one(hpc):
     nearby_points = []
 
     for direction in directions:
-        nearby_points.append(hpc + direction)
+        nearby_points.append(hcp + direction)
 
     return nearby_points

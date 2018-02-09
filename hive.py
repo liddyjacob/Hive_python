@@ -1,4 +1,4 @@
-from honeycomb import hpc_within_one
+from honeycomb import hcp_within_one
 
 
 class Hive:
