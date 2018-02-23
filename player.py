@@ -5,7 +5,7 @@ Player Object
 from pawn import default_pawns
 from honeycomb import HCPoint as HCP
 
-
+from interface import Default_Interface
 # Author: Jacob Liddy<jpl61@zips.uakron.edu>
 
 class Player:
@@ -26,13 +26,20 @@ class Player:
     ----------
     """
 
-    def __init__(self, color, pawns = None):
+    def __init__(self, color, interface = Default_Interface(), pawns = None):
         
         self.color = color;
+        self.interface = interface;
+
         if pawns == None:
             self.pawns = default_pawns(color)
         else:
             self.pawns = pawns;
+
+    def move(self, hive):
+        """ Make a move with the self.inputs """
+
+        self.interface.move(self, hive)        
 
     def place(self, pawntype, location, hive):
         """ Places a pawn on a hive board."""

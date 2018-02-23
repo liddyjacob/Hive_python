@@ -3,10 +3,13 @@ import unittest
 from pawn import default_pawns
 from pawn import Ant
 
-
-
 from honeycomb import HCPoint as HCP
 from hive import Hive
+
+from interface import Preload
+from interface import Interface
+from interface import NoDisplay
+
 from color import Color
 from player import Player
 
@@ -39,5 +42,16 @@ class TestPlayer(unittest.TestCase):
 
         self.assertFalse(hive.empty())
 
+    def test_input(self):
+
+        inputs = Preload() 
+        interface = Interface(NoDisplay(), inputs)
+
+        p1 = Player(Color.WHITE, interface)
+        hive = Hive()
+       
+        p1.move(hive)
+
+    
 if __name__ == '__main__':
     unittest.main()
