@@ -8,6 +8,8 @@ from honeycomb import HCPoint as HCP
 
 from rules import Movetype
 
+import Queue
+
 class Controller:
 
     def __init__(self):
@@ -32,8 +34,24 @@ class Keyboard(Controller):
     
 class Preload(Controller):
     
-    def __init__(self):
-        pass
+    def __init__(self, inputs_file = None):
+    
+        self.queue = Queue.Queue()
+
+        if inputs_file is not None:
+            self.load(inputs_file)
+
+    def select(self, decisions):
+        
+        choice = decisions[self.queue.get()]
+
+        return choice
+
+    def load(self, inputs_file):
+
+        with open(inputs_file) as infile:
+            for str_int in infile:
+                self.queue.put(int(str_int))
 
 
 class Display:
@@ -64,8 +82,10 @@ class CommandLine(Display):
         some basic input and output
 
         """ 
-
+        draw_string("=====HIVE=====\n\n")
         draw_as_text(hive)
+        draw_string("\n")
+        draw_string("==============\n")
         draw_string("Move(0) or Place(1): ")
         move = controller.select([Movetype.MOVE, Movetype.PLACE])
         draw_string("\n")
@@ -90,6 +110,8 @@ class CommandLine(Display):
             
             unique_pawn = piece # From the tuplet get unique pawn
 
+        draw_string("\n")
+
         locations = hive.locations()
 
         if len(locations) == 0:
@@ -101,6 +123,8 @@ class CommandLine(Display):
         location = controller.select(locations)
 
         self.decision = (move, unique_pawn, location)
+
+        draw_string("\n")
         return self.decision != None 
 
 class Interface(object):
@@ -114,7 +138,8 @@ class Interface(object):
         return NotImplemented
 
 class PlayerInterface(Interface):
-    """ An Interface is an input and output combined """
+    """ A player interface makes decisions based off a controller 
+    where the real life player has a direct input to the computer"""
 
     def __init__(self, controller, display):
         super(PlayerInterface, self).__init__(controller, display)
