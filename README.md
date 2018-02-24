@@ -1,4 +1,4 @@
-# Hive -- The Tabletop Stratagy Game!
+# Hive -- The Tabletop Strategy Game!
 
 This is an implementation of Hive in Python. Here are the planned
 main features:
