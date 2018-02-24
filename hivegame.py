@@ -4,6 +4,7 @@ It enforces thee rules, moderates the game, and
 determines the outcome.
 """
 
+from rules import HiveRef
 
 class HiveGame:
     """ Represents a Hive Game (More details coming soon). """
@@ -32,19 +33,4 @@ class HiveGame:
             self.fullcycles += 1
         
         
-
-class Referee:
-    """ The rule enforcer of the game.
-        
-        This is to allow flexibility of other developers to make
-        their own modification of the game, or make a different
-        game entirely based off of this referee.
-    """
-
-    def __init__(self):
-        pass
-
-class HiveRef(Referee):
-    """ The standard rule-enforcer of the game """
-
 

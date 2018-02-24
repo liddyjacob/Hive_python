@@ -36,10 +36,11 @@ class Player:
         else:
             self.pawns = pawns;
 
-    def move(self, hive):
+    def attempt_move(self, hive):
         """ Make a move with the self.inputs """
 
-        self.interface.move(self, hive)        
+        attempt = self.interface.move_decision(self, hive);
+        return attempt
 
     def place(self, pawntype, location, hive):
         """ Places a pawn on a hive board."""

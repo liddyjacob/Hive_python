@@ -1,7 +1,7 @@
 from color import Color
 
 
-class Pawn:
+class Pawn(object):
     """ Base class for pawns.
     
     Warning: This class should not be used directly. 
@@ -27,25 +27,43 @@ class Queen(Pawn):
     def move(self):
         return NotImplemented
 
+    def __str__(self):
+        return "Queen"
+
 class Ant(Pawn):
 
     def move(self):
         return NotImplemented
+
+    def __str__(self):
+        return "Ant"
+
 
 class Spider(Pawn):
 
     def move(self):
         return NotImplemented
 
+    def __str__(self):
+        return "Spider"
+
+
 class Beetle(Pawn):
     
     def move(self):
         return NotImplemented
 
+    def __str__(self):
+        return "Beetle"
+
+
 class Grasshopper(Pawn):
 
     def move(self):
         return NotImplemented
+
+    def __str__(self):
+        return "Grasshopper"
 
 def default_pawns(color):
     """ Generate a set of default pawns for a player to use
