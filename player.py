@@ -44,16 +44,34 @@ class Player:
 
     def place(self, pawntype, location, hive):
         """ Places a pawn on a hive board."""
-        piece = self.find(pawntype);
-
-        if piece != False:
-            hive.add(piece, location)
+        piece = self.__take__(pawntype);
+        hive.add(piece, location)
 
     def find(self, pawntype):
+        """Check to see what pawns are availible"""
 
         for pawn in self.pawns:
-
+            
             if isinstance(pawn, pawntype):
-                return pawn
-        
-        return False # No pawn of selectec type found.
+                return True
+
+        return False
+
+    def __take__(self, pawntype):
+        """ Remove a desired pawn type from the players pool of pawns """
+
+        return_pawn = None
+        newpawns = set()
+
+        for pawn in self.pawns:
+            
+            if isinstance(pawn, pawntype):
+                return_pawn = pawn
+            else:
+                newpawns.add(pawn)
+
+        if return_pawn == None:
+            raise Exception("No pawn of selected type!")
+        else:
+            self.pawns = newpawns
+            return return_pawn

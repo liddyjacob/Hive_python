@@ -27,9 +27,9 @@ class Hive:
 
         locations = self.__pawn_loc__()
         edges = []
-        for loc in locations:
 
-            for edge in hpc_within_one(loc):
+        for loc in locations:
+            for edge in hcp_within_one(loc):
 
                 if edge in locations:
                     continue
@@ -58,6 +58,14 @@ class Hive:
             pieces.append((pawn, location))
 
         return pieces
+
+    def locations(self):
+        """ Return locations and boarders """
+
+        interior = self.__pawn_loc__()
+        exterior = self.boarder()
+
+        return interior + exterior
 
     def __adjrange__(self, location):
         self.hmin = min(location.h, self.hmin)

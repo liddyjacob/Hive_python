@@ -4,6 +4,8 @@ from textdraw import draw as draw_as_text
 from textdraw import draw_string
 from textdraw import draw_list
 
+from honeycomb import HCPoint as HCP
+
 from rules import Movetype
 
 class Controller:
@@ -27,7 +29,7 @@ class Keyboard(Controller):
         choice = decisions[choicenumber]
 
         return choice
-
+    
 class Preload(Controller):
     
     def __init__(self):
@@ -82,17 +84,24 @@ class CommandLine(Display):
         if move == Movetype.PLACE:
             draw_string("What Piece?\n")
             
-            pieces = player.pawns
+            pieces = list(player.pawns)
             draw_list(pieces)
             piece = controller.select(pieces)
             
             unique_pawn = piece # From the tuplet get unique pawn
 
-        draw_string("To where?")
+        locations = hive.locations()
+
+        if len(locations) == 0:
+            locations = [HCP(0,0)]
+    
         
-        location = controller.enter_location()
+        draw_string("To where\n")
+        draw_list(locations)
+        location = controller.select(locations)
 
         self.decision = (move, unique_pawn, location)
+        return self.decision != None 
 
 class Interface(object):
     """ An Interface is an input and output combined """
@@ -122,6 +131,12 @@ class PlayerInterface(Interface):
         while self.display.update(self.controller, player, hive):
             if self.display.decision != None:
                 return self.display.decision
+
+        raise Exception("No decision made in interface.move_decision")
+
+class NPCInterface(Interface):
+    pass
+
 
 def Default_Interface():
     return PlayerInterface(Keyboard(), CommandLine())

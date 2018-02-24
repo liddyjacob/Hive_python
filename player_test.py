@@ -2,6 +2,7 @@ import unittest
 
 from pawn import default_pawns
 from pawn import Ant
+from pawn import Queen
 
 from honeycomb import HCPoint as HCP
 from hive import Hive
@@ -43,18 +44,17 @@ class TestPlayer(unittest.TestCase):
 
         self.assertFalse(hive.empty())
 
-    def test_input(self):
- 
-        interface = Default_Interface()
+    def test_piece_removal(self):
+        """ Test to see if pieces are removed from the players
+        set of pieces """
 
-        p1 = Player(Color.WHITE, interface)
+        p1 = Player(Color.WHITE)
         hive = Hive()
-       
-        p1.attempt_move(hive)
-        p1.attempt_move(hive)
-        p1.attempt_move(hive)
-        p1.attempt_move(hive)
 
-    
+        p1.place(Queen, HCP(0,0), hive)
+
+        self.assertFalse(p1.find(Queen))
+
+
 if __name__ == '__main__':
     unittest.main()
