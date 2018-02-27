@@ -3,12 +3,22 @@ from enum import Enum
 from textdraw import draw as draw_as_text
 from textdraw import draw_string
 from textdraw import draw_list
+from textdraw import stringToObject
+
+from graphdraw import updateHive
+from graphdraw import updatePlayer
 
 from honeycomb import HCPoint as HCP
 
 from rules import Movetype
 
+from graphics import *
+
+# The tnkinter GUI: from Tkinter import
+
 import Queue
+
+
 
 class Controller:
 
@@ -31,7 +41,7 @@ class Keyboard(Controller):
         choice = decisions[choicenumber]
 
         return choice
-    
+
 class Preload(Controller):
     
     def __init__(self, inputs_file = None):
@@ -43,16 +53,20 @@ class Preload(Controller):
 
     def select(self, decisions):
         
-        choice = decisions[self.queue.get()]
+        if self.queue.empty():
+            raise Exception("No decisions left in the Preload!")
+
+        choice = self.queue.get()
 
         return choice
 
     def load(self, inputs_file):
+        """ Load a file of inputs, convert strings to inputs """
 
         with open(inputs_file) as infile:
-            for str_int in infile:
-                self.queue.put(int(str_int))
-
+            for string in infile:
+                obj = stringToObject(string.rstrip())
+                self.queue.put(obj)
 
 class Display:
     
@@ -71,7 +85,6 @@ class CommandLine(Display):
     
     def __init__(self):
         self.decision = None
-        
 
     def update(self, controller, player, hive):
         """ Update for command line
@@ -126,6 +139,71 @@ class CommandLine(Display):
 
         draw_string("\n")
         return self.decision != None 
+
+class ExternalWindow(Display):
+
+    def __init__(self):
+        self.decision = None
+        self.init();
+
+    def init(self):
+        self.win = GraphWin('Hive!', 600, 600)
+
+    def update(self, controller, player, hive):
+
+        hexagon = Image(Point(200,200), 'images/Hex.png')
+        hexagon.draw(self.win)
+
+        updateHive(hive, self.win)
+        updatePlayer(player, self.win)
+
+        draw_string("=====HIVE=====\n\n")
+        draw_as_text(hive)
+        draw_string("\n")
+        draw_string("==============\n")
+        draw_string("Move(0) or Place(1): ")
+
+        move = controller.select([Movetype.MOVE, Movetype.PLACE])
+        draw_string("\n")
+
+        draw_string("What Piece?\n")
+
+        if move == None:
+            return True
+
+        unique_pawn = None
+
+        if move == Movetype.MOVE:
+            
+            pieces = hive.get_pieces()
+            draw_list(pieces)
+            piece = controller.select(pieces)
+            
+            unique_pawn = pieces[0] # From the tuplet get unique pawn
+
+        if move == Movetype.PLACE:
+            
+            pieces = list(player.pawns)
+            draw_list(pieces)
+            piece = controller.select(pieces)
+            
+            unique_pawn = piece # From the tuplet get unique pawn
+
+        locations = hive.locations()
+
+        if len(locations) == 0:
+            locations = [HCP(0,0)]
+    
+        draw_string("To where\n")
+        draw_list(locations)
+        location = controller.select(locations)
+
+        self.decision = (move, unique_pawn, location)
+
+        draw_string("\n")
+        return self.decision != None
+
+
 
 class Interface(object):
     """ An Interface is an input and output combined """

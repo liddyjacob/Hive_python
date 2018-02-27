@@ -19,7 +19,7 @@ class Pawn(object):
     on the spot.
     """
 
-    def __init__(self, color):
+    def __init__(self, color = None):
         self.color = color
 
 class Queen(Pawn):

@@ -66,12 +66,19 @@ class Player:
         for pawn in self.pawns:
             
             if isinstance(pawn, pawntype):
+
+                if return_pawn != None: # Add previously selected piece
+                    newpawns.add(return_pawn)
+
                 return_pawn = pawn
+
             else:
                 newpawns.add(pawn)
 
         if return_pawn == None:
             raise Exception("No pawn of selected type!")
+
         else:
+
             self.pawns = newpawns
             return return_pawn
