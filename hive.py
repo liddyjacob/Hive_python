@@ -162,4 +162,37 @@ def make_border(locations):
 
     return edges
 
+def zone_recursive(location, zone, border, interior):
+    nearby = hcp_within_one(location)
+    for i in range(0, 6): 
+        #Check if n0 = nearby[ i - 1], n1 = nearby[i] 
+        #are non-interior. If so, add n0 and n1
+        # to this zone as long as they are part of the border.
+        n0 = nearby[i]
+        n1 = nearby[i - 1]
+        if n0 not in interior and n1 not in interior:
+            if n0 in border:
+                border.remove(n0)
+                zone.append(n0)
+                zone_recursive(n0, zone, border, interior)
+                
+            if n1 in border:
+                border.remove(n1)
+                zone.append(n1)
+                zone_recursive(n1, zone, border, interior)
+    return
 
+
+def make_zones(border, interior):
+    zones = []
+
+    while len(border) != 0:
+
+        location = border[0]       
+        border.remove(location)
+        zones.append([location])
+        zone = zones[-1]
+
+        zone_recursive(location, zone, border, interior)
+
+    return zones

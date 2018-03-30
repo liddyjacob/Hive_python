@@ -6,7 +6,7 @@
     rules of movement.
 """
 from hive import make_border
-
+from hive import make_zones
 # movement_rules takes a set of boolean
 # functions that must be satisfied and 
 # returns a aggregate function which 
@@ -71,23 +71,33 @@ def slide_rule(init, final, hive):
 def slides(source, dest, length, hive):
 
     print ("In slides")
-    #if trapped(source, hive): return False
+
     #Movements can only be on boarder.
     if len(hive.locdict[source]) >= 2: return False
     if dest not in hive.border(): return False
 
     # Need to fix this: We can't generate the border if the source
     # is still a part of the hive!
-    mod_locs = hive.interior()
-    mod_locs.remove(source)
+    mod_interior = hive.interior()
+    mod_interior.remove(source)
 
-    border = make_border(mod_locs)
-    
-    print("Passed test!")
-    #if zone(source, boarder) != zone(dest, boarder): return False
-    #return pathfind(source, dest, length, boarder)
+    border = make_border(mod_interior)
 
-    return True
+    zones = make_zones(border, mod_interior)
+
+    i = 0
+    for zone in zones:
+        print "Zone ", i
+        i+=1
+        for hcp in zone:
+            print str(hcp)
+
+    for zone in zones:
+        if source in zone and dest in zone:
+            return True #return pathfind(source, dest, length, zone)
+
+    print("Illegal Slide")
+    return False
 
 """
     The hop rule means the piece can be on top of the hive.

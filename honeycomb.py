@@ -71,7 +71,12 @@ def hcp_to_eucl(hcp):
 
 def hcp_within_one(hcp):
     """ Find the points within one euclidian unit of distance.
-        Returns the set of points
+        Returns the sequence of points, in a cyclic order
+        5
+      4   0
+        .
+      3   1
+        2
     """
 
     directions = [HCPoint(1, 0), HCPoint(0, 1),
