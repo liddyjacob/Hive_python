@@ -23,6 +23,8 @@ aralellogram lattice point
  X = (4,2)
 """
 
+from math import sqrt
+
 
 class HCPoint:
 
@@ -50,13 +52,19 @@ def hcp_to_eucl(hcp):
 
     # Describes (0,1) from HoneyComb to euclidian,
     # "k" vector.
-    v_k = (0.0, 1.0)
+    v_k = (sqrt(3)/2.0, -1.0/2.0)
 
     # Describes (1,0) from HoneyComb to euclidian
     # "h" vector.
     v_h = (sqrt(3)/2.0, 1.0/2.0)
 
-    xy_point = v_h * hcp.h + v_k * hcp.k
+    # Adjust vectors according to point
+    v_h = (v_h[0] * hcp.h, v_h[1] * hcp.h)
+    v_k = (v_k[0] * hcp.k, v_k[1] * hcp.k)
+
+    xy_point = tuple(map(sum, zip(v_h, v_k)))
+
+    print(xy_point)
 
     return xy_point
 

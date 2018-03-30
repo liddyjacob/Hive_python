@@ -5,7 +5,7 @@
     thus we will need some utilities to combine
     rules of movement.
 """
-
+from hive import make_border
 
 # movement_rules takes a set of boolean
 # functions that must be satisfied and 
@@ -17,14 +17,16 @@ def movement_rules(rules):
 
     # Need the hive, intial position, and final location
     # to determine if a move is legal?
-    def legalmove(hive, init, final):
-        
-        for rule in rules:
-            
-            if not rule(hive, init, final):
-                return False
+    def legalmove(init, final, hive):
+        print("Checking for move legallity...")
+        print "\tNumber of rules to check: ", len(rules)
 
-        return True
+        for rule in rules:
+            if rule(init, final, hive):
+                return True
+
+        print("Move was illegal")
+        return False
 
     return legalmove
 
@@ -63,20 +65,51 @@ explination point.
 
 """
 
-def slide_rule(hive, init, final):
+def slide_rule(init, final, hive):
     return NotImplemented
 
+def slides(source, dest, length, hive):
+
+    print ("In slides")
+    #if trapped(source, hive): return False
+    #Movements can only be on boarder.
+    if len(hive.locdict[source]) >= 2: return False
+    if dest not in hive.border(): return False
+
+    # Need to fix this: We can't generate the border if the source
+    # is still a part of the hive!
+    mod_locs = hive.interior()
+    mod_locs.remove(source)
+
+    border = make_border(mod_locs)
+    
+    print("Passed test!")
+    #if zone(source, boarder) != zone(dest, boarder): return False
+    #return pathfind(source, dest, length, boarder)
+
+    return True
 
 """
     The hop rule means the piece can be on top of the hive.
 """
-def hop_rule(hive, init, final):
+def hop_rule(init, final, hive):
+    pass
 
 
 
+def jump_rule(init, final, hive):
+    pass
 
-def jump_rule(hive, init, final):
 
+def slide_rule_maker(length):
+    print("Slide rule construction")
+    def length_rule(init, final, hive):
+        print ("In length rule\n")
 
+        if slides(init, final, length, hive):
+            return True
+        print ("Length rule failed")
 
-def length_rule
+        return False
+
+    return length_rule

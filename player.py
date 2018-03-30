@@ -42,13 +42,21 @@ class Player:
         attempt = self.interface.move_decision(self, hive);
         return attempt
 
-    def place(self, pawntype, location, hive):
+    def place(self, (pawntype, location, hive)):
         """ Places a pawn on a hive board."""
         piece = self.__take__(pawntype);
         hive.add(piece, location)
+        self.interface.place(piece, location);
 
-    def find(self, pawntype):
+    def move(self, (init_loc, dest_loc, hive)):
+        self.interface.move(init_loc, dest_loc);
+        pawn = hive.remove(init_loc)
+        hive.add(pawn, dest_loc)
+
+    def find(self, pawn):
         """Check to see what pawns are availible"""
+
+        pawntype = type(pawn)
 
         for pawn in self.pawns:
             
@@ -57,11 +65,13 @@ class Player:
 
         return False
 
-    def __take__(self, pawntype):
+    def __take__(self, pawn):
         """ Remove a desired pawn type from the players pool of pawns """
 
+        pawntype = type(pawn)
+
         return_pawn = None
-        newpawns = set()
+        newpawns = set() 
 
         for pawn in self.pawns:
             

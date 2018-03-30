@@ -7,6 +7,7 @@ from hive import Hive
 
 from rules import HiveRef
 from rules import Movetype
+from rules import HiveRulebook
 
 from enum import Enum
 
@@ -20,7 +21,7 @@ class HiveGame:
 
         # Make a standard referee
         if referee is None:
-            self.ref = HiveRef()
+            self.ref = HiveRef(HiveRulebook())
 
     def start(self):
         self.fullcycles = 0 
@@ -30,6 +31,7 @@ class HiveGame:
     def step(self):
         
         player = self.players[self.whosemove]
+        
         initial_player = self.whosemove
         referee = self.ref # For ease of reading code
 
@@ -43,20 +45,20 @@ class HiveGame:
 
         attempt = player.attempt_move(self.hive)
 
-        while referee.illegal_move(attempt):
+        while referee.illegal_move(attempt, self):
             attempt = player.attempt_move(self.hive)
 
         # Unpackage attempt:
         
-        movetype    = attempt[0] 
-        unique_pawn = attempt[1] 
-        location    = attempt[2] 
+        movetype    = attempt.movetype
+        parameters  = attempt.parameters + (self.hive,)
 
         if movetype == Movetype.PLACE:
-            player.place(type(unique_pawn), location, self.hive)
+            player.place(parameters)
 
         if movetype == Movetype.MOVE:
-            return NotImplemented
+            player.move(parameters)
+            
 
         self.__next_player__()
 
@@ -67,11 +69,15 @@ class HiveGame:
 
         if self.whosemove is 0: # Back to the starting player
             self.fullcycles += 1
+    def current_player(self):
+
+        return self.players[self.whosemove]
 
 class Gamestate(Enum):
     INGAME = 0
     STALEMATE = 1 # No player can move
     VICTORY = 2
     DRAW = 3 # Both players have queen surrounded
-        
+    END = 4
 
+ 

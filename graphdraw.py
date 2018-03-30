@@ -2,10 +2,30 @@
 
 from graphics import *
 
+from honeycomb import hcp_to_eucl
+
 from color import Color
 
-def updateHive(hive, win):
-    pass
+def center(hcp):
+
+    eucl = hcp_to_eucl(hcp)   
+
+    distance = 38;
+    center = (300, 225)
+
+    eucl = (distance * eucl[0], distance * eucl[1]) 
+    eucl = tuple(map(sum, zip(eucl, center)))
+
+    return eucl
+ 
+def drawPawn(pawn, hcp, win):
+
+    #  / Y axis
+    # /
+    # \
+    #  \ X axis
+    eucl = center(hcp)
+    return draw_pawn_eucl(pawn, eucl, win)    
 
 def updatePlayer(player, win, settings = None):
     
@@ -20,11 +40,10 @@ def updatePlayer(player, win, settings = None):
     for pawn in list(player.pawns):
 
         print(location)
-        draw_pawn(pawn, location, win)
+        draw_pawn_eucl(pawn, location, win)
         location = tuple(map(sum, zip(location, delta)))
 
-def draw_pawn(pawn, location, win):
-
+def draw_pawn_eucl(pawn, location, win):
     x = location[0]
     y = location[1]
 
@@ -36,6 +55,7 @@ def draw_pawn(pawn, location, win):
     color_graphic.draw(win)
     pawn_graphic.draw(win)
 
+    return pawn_graphic, color_graphic
 
 def pawn_image_lookup(pawn):
     """ Lookup image, then return a sprite. """

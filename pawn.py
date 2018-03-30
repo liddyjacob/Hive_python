@@ -1,5 +1,7 @@
 from color import Color
 
+from pawnutils import movement_rules
+from pawnutils import slide_rule_maker
 
 class Pawn(object):
     """ Base class for pawns.
@@ -21,49 +23,54 @@ class Pawn(object):
 
     def __init__(self, color = None):
         self.color = color
+        self._setrules_()
 
 class Queen(Pawn):
 
-    def move(self):
-        return NotImplemented
-
+#    rules = movement_rules([(slide_rule_maker(1))])
     def __str__(self):
         return "Queen"
 
-class Ant(Pawn):
+    def _setrules_(self):
+        self.rules = movement_rules([slide_rule_maker(1)])
 
-    def move(self):
-        return NotImplemented
+class Ant(Pawn):
 
     def __str__(self):
         return "Ant"
 
+    def _setrules_(self):
+        self.rules = movement_rules([slide_rule_maker(1)])
+
+
 
 class Spider(Pawn):
-
-    def move(self):
-        return NotImplemented
 
     def __str__(self):
         return "Spider"
 
+    def _setrules_(self):
+        self.rules = movement_rules([slide_rule_maker(1)])
+
+
 
 class Beetle(Pawn):
     
-    def move(self):
-        return NotImplemented
-
     def __str__(self):
         return "Beetle"
+
+    def _setrules_(self):
+        self.rules = movement_rules([slide_rule_maker(1)])
 
 
 class Grasshopper(Pawn):
 
-    def move(self):
-        return NotImplemented
-
     def __str__(self):
         return "Grasshopper"
+
+    def _setrules_(self):
+        self.rules = movement_rules([slide_rule_maker(1)])
+
 
 def default_pawns(color):
     """ Generate a set of default pawns for a player to use
