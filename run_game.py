@@ -1,8 +1,9 @@
 """ Run the game: For Developing purpose """
 
-from interface import PlayerInterface
-from interface import Keyboard
-from interface import ExternalWindow
+#from interface import PlayerInterface
+#from interface import Keyboard
+#from interface import ExternalWindow
+from interface import InteractiveInterface
 
 from color import Color
 
@@ -14,7 +15,7 @@ from game import run_game
 
 def main():
     
-    interface = PlayerInterface(Keyboard(), ExternalWindow())
+    interface = InteractiveInterface()#Keyboard(), ExternalWindow())
     p1 = Player(Color.WHITE, interface)
     p2 = Player(Color.BLACK, interface)
 

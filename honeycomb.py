@@ -37,6 +37,14 @@ class HCPoint:
         k = self.k + other.k
         return HCPoint(h, k)
 
+    def __sub__(self, other):
+        h = self.h - other.h
+        k = self.k - other.k
+        return HCPoint(h, k)
+
+
+
+
     def __eq__(self, other):
         return (self.h == other.h) and (self.k == other.k)
 
@@ -46,6 +54,17 @@ class HCPoint:
     def __hash__(self):
         return 3*self.h + 13*self.k
 
+def dist(source, dest):
+    hdiff = source.h - dest.h
+    kdiff = source.k - dest.k
+
+    return sqrt(hdiff*hdiff + kdiff*kdiff)
+
+def dist_eucl(point1, point2):
+    dx = point1[0] - point2[0]
+    dy = point1[1] - point2[1]
+
+    return sqrt(dx * dx + dy * dy)
 
 def hcp_to_eucl(hcp):
     """ Converts a honeycomb point to euclidian"""
@@ -88,3 +107,32 @@ def hcp_within_one(hcp):
         nearby_points.append(hcp + direction)
 
     return nearby_points
+
+#Integral line where points are continuous
+def create_line(source, dest):
+
+    if source == dest: return []
+
+    directions = [HCPoint(1, 0), HCPoint(0, 1),
+                  HCPoint(-1, 1), HCPoint(-1, 0),
+                  HCPoint(0, -1), HCPoint(1, -1)]   
+    diff = dest - source
+    unit_vector = HCPoint(diff.h / dist(source, dest), 
+                          diff.k / dist(source, dest))
+
+    print "Unit vector: ", str(unit_vector)
+    point = source
+    if unit_vector in directions:
+        unit_vector.h = int(unit_vector.h)
+        unit_vector.k = int(unit_vector.k)
+
+        point = point + unit_vector
+        line = []
+        while dist(point, dest) != 0.0:
+            print "Point on line: ", point
+            line.append(point)
+            point = point + unit_vector
+        return line
+
+    return []
+

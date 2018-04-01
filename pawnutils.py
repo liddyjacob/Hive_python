@@ -7,6 +7,9 @@
 """
 from hive import make_border
 from hive import make_zones
+
+from honeycomb import create_line
+from honeycomb import hcp_within_one
 # movement_rules takes a set of boolean
 # functions that must be satisfied and 
 # returns a aggregate function which 
@@ -103,13 +106,34 @@ def slides(source, dest, length, hive):
     The hop rule means the piece can be on top of the hive.
 """
 def hop_rule(init, final, hive):
-    pass
+    line = create_line(init, final)
+    if len(line) == 0 : return False
+
+    for hcp in line:
+        print "Checking if hcp is not empty: ", hcp
+        if len(hive.locdict[hcp]) == 0: return False
+
+    if hive.locdict.get(final) == None: return True
+    if len(hive.locdict.get(final)) != 0: return False
+ 
+    return True
 
 
 
 def jump_rule(init, final, hive):
-    pass
 
+    mod_interior = hive.interior()
+    mod_interior.remove(init)
+
+    border = make_border(mod_interior)
+
+    if final not in hcp_within_one(init):
+        return False
+
+    #Pieces on top can go anywhere.
+    if len(hive.locdict[init]) >= 2: return True
+
+    return (final in hive.interior())
 
 def slide_rule_maker(length):
     print("Slide rule construction")

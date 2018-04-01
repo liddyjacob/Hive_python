@@ -8,13 +8,19 @@ from textdraw import stringToObject
 from graphdraw import center
 from graphdraw import updatePlayer
 from graphdraw import drawPawn
+from graphdraw import draw_pawn_eucl
 
 from honeycomb import HCPoint as HCP
+
+from pawn import Ant
 
 from rules import Movetype
 from rules import Move
 
 from graphics import *
+
+from tactile import HiveHex
+from tactile import PlayerHex
 
 # The tnkinter GUI: from Tkinter import
 
@@ -120,15 +126,12 @@ class CommandLine(Display):
 
         if move == Movetype.PLACE:
             draw_string("What Piece?\n")
-            
             pieces = list(player.pawns)
             draw_list(pieces)
             piece = controller.select(pieces)
-            
             parameter1 = type(piece) # From the tuplet get unique pawn
 
         draw_string("\n")
-
         locations = hive.locations()
 
         if len(locations) == 0:
@@ -238,13 +241,11 @@ class ExternalWindow(Display):
 
         del self.imgdict[init]
 
-        pawnimg.move(dx, dy) 
-        colorimg.move(dx, dy)       
+        pawnimg.move(dx, dy)
+        colorimg.move(dx, dy)    
 
         self.imgdict.setdefault(dest, (pawnimg, colorimg))
-        self.win.redraw()
-       
-
+        self.win.redraw()       
 
 class Interface(object):
     """ An Interface is an input and output combined """
@@ -284,6 +285,143 @@ class PlayerInterface(Interface):
 
     def move(self, init, dest):
         self.display.move(init, dest)
+
+class InteractiveInterface(Interface):
+
+    def __init__(self):
+        #super(PlayerInterface, self).__init__(controller, display)
+        self.load()
+
+    def load(self):
+        self.win = GraphWin('Hive!', 600, 600)
+        self.hivehex_dict = {}
+        self.playerhex_list= []
+
+    def move_decision(self, player, hive):
+        """ Makes a decision on what move should be made 
+        Returns parameters for desired move. These parameters are:
+            * Movetype: What kind of move? Placement? Movement?
+            * Piece: What piece on board or in hand?
+            * Location: Desired location of piece? 
+        """
+        self.decision = None
+        self.clean_player()
+        
+        self.draw_player(player)
+
+        while self._update_(player, hive):
+            if self.decision != None:
+                return self.decision
+
+        raise Exception("No decision made in interface.move_decision")
+
+    def _update_(self, player, hive):
+        """ Update until a move is made """
+     
+        #updatePlayer(player, self.win)
+
+        draw_string("=====HIVE=====\n\n")
+        draw_as_text(hive)
+        draw_string("\n")
+        draw_string("==============\n")
+        draw_string("Move(0) or Place(1): ")
+        draw_string("\n")
+        
+        (movetype, piece, location) = self.mouse_movetype()
+
+        if movetype == None:
+            return True
+
+        parameter1 = None
+
+        if movetype == Movetype.MOVE:                   
+            parameter1 = location # From the tuplet get unique pawn
+
+        if movetype == Movetype.PLACE:
+            parameter1 = piece #type(piece) # From the tuplet get unique pawn
+
+    
+        draw_string("To where\n")
+
+        parameter2 = self.mouse_moveto()
+        self.decision = Move(movetype, (parameter1, parameter2))
+        return self.decision != None
+
+    def draw_player(self, player, settings = None):
+        i = 0
+        for pawn in list(player.pawns):
+
+            newhex = PlayerHex(pawn, i, settings)
+            newhex.draw(self.win)
+            
+            self.playerhex_list.append(newhex)
+            i += 1
+
+    def clean_player(self):
+        
+
+        for i in range(0, len(self.playerhex_list)):
+            phex = self.playerhex_list[0]
+            phex.undraw()
+
+            
+        phex = []
+
+    """ Place a piece on the board """
+    def place(self, pawn, loc, settings = None):
+
+        newhex = HiveHex(pawn, loc, settings)
+        newhex.draw(self.win)
+        self.hivehex_dict.setdefault(loc, newhex)
+
+        self.win.redraw()
+
+    """ Move a piece from it's initial location to its final location """
+    def move(self, init, dest):
+
+        init_eucl = center(init)
+        dest_eucl = center(dest)
+        diff = (dest_eucl[0] - init_eucl[0], dest_eucl[1] - init_eucl[1])
+
+        dx = diff[0]
+        dy = diff[1]
+
+        movedhex = self.hivehex_dict[init]
+        del self.hivehex_dict[init]
+
+        movedhex.move(dx, dy)
+
+        self.hivehex_dict.setdefault(dest, movedhex)
+        self.win.redraw()
+
+    def mouse_movetype(self):
+
+        while True:
+            ptr = self.win.getMouse()
+            for playerhex in self.playerhex_list:
+                print "Checking player pieces..."
+                print "\tMouse location:", ptr
+                print "\tPoints: "
+
+                if playerhex.in_hitbox(ptr): 
+                    return (Movetype.PLACE, playerhex.pawn, HCP(0,0))
+
+            for hcp, hivehex in self.hivehex_dict.iteritems():
+                print "Checking board pieces.."
+                if playerhex.in_hitbox(ptr):
+                    return (Movetype.MOVE, None, hcp)
+
+        return (Movetype.PLACE, Ant(), HCP(0,0))
+        pass
+
+    def mouse_moveto(self):
+        while True:
+            #Create a sheet of possible moves, delete sheet after this is done.
+            sheet = makesheet(self.hive)
+            ptr = self.win.getMouse()
+            
+            for sheethex in sheet:
+                if sheethex.in_hitbox(ptr): return sheethex.hcp
 
 class NPCInterface(Interface):
     pass

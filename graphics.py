@@ -569,7 +569,11 @@ class Point(GraphicsObject):
         other = Point(self.x,self.y)
         other.config = self.config.copy()
         return other
-                
+    
+    def __getitem__(self, i):
+        if i == 0: return self.x
+        if i == 1: return self.y
+
     def getX(self): return self.x
     def getY(self): return self.y
 
@@ -779,6 +783,10 @@ class Text(GraphicsObject):
     def setTextColor(self, color):
         self.setFill(color)
 
+
+
+        pawnimg = self.hiveimg_list[init][0]
+        colorimg = self.hiveimg_dict[init][1]
 
 class Entry(GraphicsObject):
 

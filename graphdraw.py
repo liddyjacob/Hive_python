@@ -1,9 +1,7 @@
 """ Graphdraw: Drawing helpers for graphical things """
 
 from graphics import *
-
 from honeycomb import hcp_to_eucl
-
 from color import Color
 
 def center(hcp):

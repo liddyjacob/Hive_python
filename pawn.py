@@ -2,6 +2,8 @@ from color import Color
 
 from pawnutils import movement_rules
 from pawnutils import slide_rule_maker
+from pawnutils import hop_rule
+from pawnutils import jump_rule
 
 class Pawn(object):
     """ Base class for pawns.
@@ -60,7 +62,7 @@ class Beetle(Pawn):
         return "Beetle"
 
     def _setrules_(self):
-        self.rules = movement_rules([slide_rule_maker(1)])
+        self.rules = movement_rules([slide_rule_maker(1), jump_rule])
 
 
 class Grasshopper(Pawn):
@@ -69,7 +71,7 @@ class Grasshopper(Pawn):
         return "Grasshopper"
 
     def _setrules_(self):
-        self.rules = movement_rules([slide_rule_maker(1)])
+        self.rules = movement_rules([hop_rule])
 
 
 def default_pawns(color):
