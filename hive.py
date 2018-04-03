@@ -98,6 +98,7 @@ class Hive:
         return self.locdict[loc].top()
 
     def __getitem__(self, loc):
+        print "Loc: ", loc
         return self.locdict[loc].top()
 
 

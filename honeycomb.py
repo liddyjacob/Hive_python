@@ -83,10 +83,23 @@ def hcp_to_eucl(hcp):
 
     xy_point = tuple(map(sum, zip(v_h, v_k)))
 
-    print(xy_point)
+    #print "xy_point"
 
     return xy_point
 
+def eucl_to_hcp(eucl):
+
+    e_x = (1.0 / sqrt(3), 1 / sqrt(3))
+    e_y = (1.0, -1.0)
+
+    e_x = (e_x[0] * eucl[0], e_x[1] * eucl[0])
+    e_y = (e_y[0] * eucl[1], e_y[1] * eucl[1])
+
+    (h, k) = tuple(map(sum, zip(e_x, e_y)))
+
+    print "in eucl_to_hcp: ", HCPoint(h, k)
+
+    return HCPoint(h, k)
 
 def hcp_within_one(hcp):
     """ Find the points within one euclidian unit of distance.
@@ -116,23 +129,28 @@ def create_line(source, dest):
     directions = [HCPoint(1, 0), HCPoint(0, 1),
                   HCPoint(-1, 1), HCPoint(-1, 0),
                   HCPoint(0, -1), HCPoint(1, -1)]   
+
     diff = dest - source
-    unit_vector = HCPoint(diff.h / dist(source, dest), 
-                          diff.k / dist(source, dest))
+    diff_eucl = hcp_to_eucl(diff)
+    unit_eucl = (diff_eucl[0] / dist_eucl((0,0), diff_eucl), 
+                        diff_eucl[1] / dist_eucl((0,0), diff_eucl))
+    unit_vector = eucl_to_hcp(unit_eucl)
 
     print "Unit vector: ", str(unit_vector)
     point = source
-    if unit_vector in directions:
-        unit_vector.h = int(unit_vector.h)
-        unit_vector.k = int(unit_vector.k)
+    for dr in directions:
+        print "diff of: ", dr, " is ", dist(dr, unit_vector)
+        if dist(dr, unit_vector) < 0.00000001:
+            unit_vector.h = int(round(unit_vector.h))
+            unit_vector.k = int(round(unit_vector.k))
 
-        point = point + unit_vector
-        line = []
-        while dist(point, dest) != 0.0:
-            print "Point on line: ", point
-            line.append(point)
             point = point + unit_vector
-        return line
+            line = []
+            while dist(point, dest) != 0.0:
+                print "Point on line: ", point
+                line.append(point)
+                point = point + unit_vector
+            return line
 
     return []
 

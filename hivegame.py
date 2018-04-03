@@ -9,6 +9,8 @@ from rules import HiveRef
 from rules import Movetype
 from rules import HiveRulebook
 
+from gamestate import Gamestate
+
 from enum import Enum
 
 class HiveGame:
@@ -27,6 +29,7 @@ class HiveGame:
         self.fullcycles = 0 
         self.whosemove = 0 # It is player number zero's move
         self.gamestate = Gamestate.INGAME
+        self.winner = None
 
     def step(self):
         
@@ -37,6 +40,7 @@ class HiveGame:
 
         while referee.cant_move(player, self.hive):
             self.__next_player__()
+            player = self.players[self.whosemove]
             
             if self.whosemove == initial_player:
                 #Referee has determined that nobody can move
@@ -47,7 +51,6 @@ class HiveGame:
 
         while referee.illegal_move(attempt, self):
             attempt = player.attempt_move(self.hive)
-
         # Unpackage attempt:
         
         movetype    = attempt.movetype
@@ -59,7 +62,9 @@ class HiveGame:
         if movetype == Movetype.MOVE:
             player.move(parameters)
             
-
+        if referee.game_ends(self):
+            interface_endgame(self)
+            
         self.__next_player__()
 
     def __next_player__(self):
@@ -73,11 +78,3 @@ class HiveGame:
 
         return self.players[self.whosemove]
 
-class Gamestate(Enum):
-    INGAME = 0
-    STALEMATE = 1 # No player can move
-    VICTORY = 2
-    DRAW = 3 # Both players have queen surrounded
-    END = 4
-
- 

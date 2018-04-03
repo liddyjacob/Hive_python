@@ -46,12 +46,12 @@ class Player:
         """ Places a pawn on a hive board."""
         piece = self.__take__(pawntype);
         hive.add(piece, location)
-        self.interface.place(piece, location);
+        #self.interface.place(piece, location);
 
     def move(self, (init_loc, dest_loc, hive)):
-        self.interface.move(init_loc, dest_loc);
         pawn = hive.remove(init_loc)
         hive.add(pawn, dest_loc)
+        #self.interface.move(init_loc, dest_loc, hive);
 
     def find(self, pawn):
         """Check to see what pawns are availible"""

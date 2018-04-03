@@ -136,7 +136,7 @@ def jump_rule(init, final, hive):
     return (final in hive.interior())
 
 def slide_rule_maker(length):
-    print("Slide rule construction")
+    #print("Slide rule construction")
     def length_rule(init, final, hive):
         print ("In length rule\n")
 

@@ -1,3 +1,5 @@
+import time
+
 from enum import Enum
 
 from textdraw import draw as draw_as_text
@@ -21,7 +23,7 @@ from graphics import *
 
 from tactile import HiveHex
 from tactile import PlayerHex
-
+from tactile import make_sheet
 # The tnkinter GUI: from Tkinter import
 
 import Queue
@@ -225,7 +227,7 @@ class ExternalWindow(Display):
         #updatePlayer(player, self.win)
 
     """ Move a piece from it's initial location to its final location """
-    def move(self, init, dest):
+    def move(self, init, dest, hive):
 
         print self.win.items
 
@@ -306,19 +308,19 @@ class InteractiveInterface(Interface):
         """
         self.decision = None
         self.clean_player()
-        
+        self.clean_hive()
+        self.win.redraw()
         self.draw_player(player)
-
+        self.draw_hive(hive)
         while self._update_(player, hive):
             if self.decision != None:
-                return self.decision
+                break; 
+        return self.decision
 
         raise Exception("No decision made in interface.move_decision")
 
     def _update_(self, player, hive):
         """ Update until a move is made """
-     
-        #updatePlayer(player, self.win)
 
         draw_string("=====HIVE=====\n\n")
         draw_as_text(hive)
@@ -343,8 +345,9 @@ class InteractiveInterface(Interface):
     
         draw_string("To where\n")
 
-        parameter2 = self.mouse_moveto()
+        parameter2 = self.mouse_moveto(hive)
         self.decision = Move(movetype, (parameter1, parameter2))
+        print "Exit _update_"
         return self.decision != None
 
     def draw_player(self, player, settings = None):
@@ -359,13 +362,29 @@ class InteractiveInterface(Interface):
 
     def clean_player(self):
         
-
         for i in range(0, len(self.playerhex_list)):
-            phex = self.playerhex_list[0]
+            phex = self.playerhex_list[i]
             phex.undraw()
+            del phex    
 
-            
-        phex = []
+        self.playerhex_list = []
+
+    def draw_hive(self, hive):
+
+        for loc in hive.interior():
+            pawn = hive[loc]
+            newhex = HiveHex(pawn, loc)
+            newhex.draw(self.win)
+
+            self.hivehex_dict[loc] = newhex
+
+    def clean_hive(self):
+
+        for loc, hivehex in self.hivehex_dict.iteritems():
+            hivehex.undraw()
+            del hivehex
+
+        self.hivehex_dict = {}
 
     """ Place a piece on the board """
     def place(self, pawn, loc, settings = None):
@@ -377,21 +396,30 @@ class InteractiveInterface(Interface):
         self.win.redraw()
 
     """ Move a piece from it's initial location to its final location """
-    def move(self, init, dest):
+    def move(self, init, dest, hive):
 
         init_eucl = center(init)
         dest_eucl = center(dest)
         diff = (dest_eucl[0] - init_eucl[0], dest_eucl[1] - init_eucl[1])
+        
+        if dest in self.hivehex_dict:
+            prev_piece = self.hivehex_dict[dest]
+            if prev_piece != None:  
+                prev_piece.undraw()
+                del self.hivehex_dict[dest]
+  
+        movedhex = self.hivehex_dict[init] 
+        movedhex.move(dest)
+        self.hivehex_dict[dest] = movedhex
+
+        if init in hive.interior():
+            uncov_hex = HiveHex(hive[init], init) 
+            uncov_hex.draw(self.win)
+            self.hivehex_dict[init] =  uncov_hex
 
         dx = diff[0]
         dy = diff[1]
-
-        movedhex = self.hivehex_dict[init]
-        del self.hivehex_dict[init]
-
-        movedhex.move(dx, dy)
-
-        self.hivehex_dict.setdefault(dest, movedhex)
+        
         self.win.redraw()
 
     def mouse_movetype(self):
@@ -399,32 +427,41 @@ class InteractiveInterface(Interface):
         while True:
             ptr = self.win.getMouse()
             for playerhex in self.playerhex_list:
-                print "Checking player pieces..."
-                print "\tMouse location:", ptr
-                print "\tPoints: "
-
                 if playerhex.in_hitbox(ptr): 
                     return (Movetype.PLACE, playerhex.pawn, HCP(0,0))
 
+            print "Elements on field: ", len(self.hivehex_dict)
             for hcp, hivehex in self.hivehex_dict.iteritems():
-                print "Checking board pieces.."
-                if playerhex.in_hitbox(ptr):
+                print "\tType of pawn: ", type(hivehex.pawn)
+                print "\tLocation of pawn: ", hivehex.hcp
+                if hivehex.in_hitbox(ptr):
                     return (Movetype.MOVE, None, hcp)
 
         return (Movetype.PLACE, Ant(), HCP(0,0))
         pass
 
-    def mouse_moveto(self):
-        while True:
-            #Create a sheet of possible moves, delete sheet after this is done.
-            sheet = makesheet(self.hive)
-            ptr = self.win.getMouse()
+    def mouse_moveto(self, hive):
+        #Create a sheet of possible moves, delete sheet after this is done.
+        sheet = make_sheet(hive)
+        for sheethex in sheet: sheethex.draw(self.win)
+        ptr = self.win.getMouse()
             
-            for sheethex in sheet:
-                if sheethex.in_hitbox(ptr): return sheethex.hcp
+        to = None
+
+        for sheethex in sheet:
+            if sheethex.in_hitbox(ptr): to = sheethex.hcp
+            sheethex.undraw()
+        
+        return to
+
 
 class NPCInterface(Interface):
     pass
+
+
+def interface_endgame(game):
+    if game.winner == None: 
+        win = game.players[0].interface.win
 
 
 def Default_Interface():
