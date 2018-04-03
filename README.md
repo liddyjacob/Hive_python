@@ -12,7 +12,7 @@ main features:
 
 ### Prerequisites:
 
-Python 2.7.2
+Python 2.7.2 and Tkinter
 
 ### Installing
 

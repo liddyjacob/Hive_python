@@ -9,6 +9,8 @@ from rules import HiveRef
 from rules import Movetype
 from rules import HiveRulebook
 
+from color import Color
+
 from gamestate import Gamestate
 
 from enum import Enum
@@ -63,7 +65,13 @@ class HiveGame:
             player.move(parameters)
             
         if referee.game_ends(self):
-            interface_endgame(self)
+            if self.winner is not None:
+                if self.winner == Color.WHITE:
+                    print "White Wins"
+                else:
+                    print "Black Wins"
+            else: print "Tie Game!"
+            #interface_endgame(self)
             
         self.__next_player__()
 

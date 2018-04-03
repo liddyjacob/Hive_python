@@ -9,5 +9,8 @@ def run_game(hivegame):
     while (hivegame.gamestate == Gamestate.INGAME):
         hivegame.step()
 
+    hivegame.step()
+    while True: pass
+
     if (hivegame.gamestate == Gamestate.END):
         return
